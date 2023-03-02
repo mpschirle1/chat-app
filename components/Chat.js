@@ -6,23 +6,12 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 
 const firebase = require("firebase");
 require("firebase/firestore");
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAo-uWRRrp3gtYYDeEpgBM24Vux1K1YOKk",
-  authDomain: "chat-app-fe670.firebaseapp.com",
-  projectId: "chat-app-fe670",
-  storageBucket: "chat-app-fe670.appspot.com",
-  messagingSenderId: "649726935485",
-  appId: "1:649726935485:web:0aee1e65f0fa919d0292d4",
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
 export default class Chat extends React.Component {
   constructor() {
@@ -36,13 +25,52 @@ export default class Chat extends React.Component {
         name: "",
       },
       loggedInText: "Authenticating, please wait...",
+      isConnected: false,
     };
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAo-uWRRrp3gtYYDeEpgBM24Vux1K1YOKk",
+      authDomain: "chat-app-fe670.firebaseapp.com",
+      projectId: "chat-app-fe670",
+      storageBucket: "chat-app-fe670.appspot.com",
+      messagingSenderId: "649726935485",
+      appId: "1:649726935485:web:0aee1e65f0fa919d0292d4",
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
     this.referenceChatMessages = firebase.firestore().collection("messages");
+  }
+
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   componentDidMount() {
     let name = this.props.route.params.name;
     this.props.navigation.setOptions({ title: name });
+
+    this.getMessages();
+
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        this.setState({ isConnected: true });
+        console.log("online");
+      } else {
+        this.setState({ isConnected: false });
+        console.log("offline");
+      }
+    });
 
     this.referenceChatMessages = firebase.firestore().collection("messages");
     this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -65,6 +93,7 @@ export default class Chat extends React.Component {
   }
 
   onCollectionUpdate = (querySnapshot) => {
+    if (!this.state.isConnected) return;
     const messages = [];
     // Go through each document
     querySnapshot.forEach((doc) => {
@@ -103,8 +132,32 @@ export default class Chat extends React.Component {
       }),
       () => {
         this.addMessage(messages);
+        this.saveMessages();
       }
     );
+  }
+
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringify(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+      console.log("messages deleted");
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   componentWillUnmount() {
@@ -125,6 +178,13 @@ export default class Chat extends React.Component {
     );
   }
 
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
+  }
+
   render() {
     let color = this.props.route.params.color;
     let name = this.props.route.params.name;
@@ -136,6 +196,7 @@ export default class Chat extends React.Component {
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
           onSend={(messages) => this.onSend(messages)}
           user={{
             _id: this.state.uid,
