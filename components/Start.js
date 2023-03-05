@@ -34,6 +34,9 @@ export default class Start extends React.Component {
           <Text style={styles.title}>Chat App</Text>
           <View style={styles.inputBox}>
             <TextInput
+              accessible={true}
+              accessibilityLabel="Enter your name"
+              accessibilityHint="Enter your name here"
               style={styles.nameInput}
               onChangeText={(name) => this.setState({ name })}
               value={this.state.name}
@@ -93,6 +96,10 @@ export default class Start extends React.Component {
               </View>
             </View>
             <TouchableOpacity
+              accessible={true}
+              accessibilityLabel="Start chatting"
+              accessibilityHint="Enter the chat room"
+              accessibilityRole="button"
               style={styles.chatButton}
               onPress={() =>
                 this.props.navigation.navigate("Chat", {

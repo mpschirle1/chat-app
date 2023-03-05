@@ -231,6 +231,9 @@ export default class Chat extends React.Component {
             {this.state.loggedInText}
           </Text>
           <GiftedChat
+            accessible={true}
+            accessibilityLabel="Message input field"
+            accessibilityHint="Type your message here"
             renderBubble={this.renderBubble.bind(this)}
             messages={this.state.messages}
             renderInputToolbar={this.renderInputToolbar.bind(this)}
