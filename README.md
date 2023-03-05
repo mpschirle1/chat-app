@@ -2,34 +2,38 @@
 
 ## About
 
-Chat App (as the name implies) is a simple chat app for mobile devices (iOS & Android) written with React Native, and developed using Expo. The app provides users with a chat interface and options to share images and their location.
+Chat App (as the name implies) is a simple chat app for mobile devices (iOS & Android) written with React Native, and developed using Expo. The app provides users with a chat interface and options to share images and their location. Google Firebase has been implemented for anonymous user authentication and cloud storage of messages and images. Users can also use the app offline to view previous conversations stored locally.
 
-![Application Screenshot](chat-app_screenshot1.png) ![Application Screenshot](chat-app_screenshot2.png)
+<pre>
+<img src="chat-app_screenshot1.png" width="250">  <img src="chat-app_screenshot2.png" width="250">
+</pre>
 
 ## Dependencies
 
-`   "@react-native-async-storage/async-storage": "~1.17.3",
-    "@react-native-community/masked-view": "^0.1.11",
-    "@react-navigation/native": "^6.1.4",
-    "@react-navigation/stack": "^6.3.13",
-    "expo": "~47.0.12",
-    "expo-status-bar": "~1.4.2",
-    "firebase": "^8.1.0",
-    "react": "18.1.0",
-    "react-native": "0.70.5",
-    "react-native-gesture-handler": "~2.8.0",
-    "react-native-gifted-chat": "^1.1.1",
-    "react-native-reanimated": "~2.12.0",
-    "react-native-safe-area-context": "4.4.1",
-    "react-native-screens": "~3.18.0",
-    "react-navigation": "^4.4.4",
-    "@react-native-community/netinfo": "9.3.5",
-    "expo-permissions": "~14.0.0",
-    "expo-image-picker": "~14.0.2",
-    "react-native-action-sheet": "^2.2.0",
-    "expo-camera": "~13.1.0",
-    "expo-location": "~15.0.1",
-    "react-native-maps": "1.3.2"`
+<pre>
+"@react-native-async-storage/async-storage": "~1.17.3",
+"@react-native-community/masked-view": "^0.1.11",
+"@react-navigation/native": "^6.1.4",
+"@react-navigation/stack": "^6.3.13",
+"expo": "~47.0.12",
+"expo-status-bar": "~1.4.2",
+"firebase": "^8.1.0",
+"react": "18.1.0",
+"react-native": "0.70.5",
+"react-native-gesture-handler": "~2.8.0",
+"react-native-gifted-chat": "^1.1.1",
+"react-native-reanimated": "~2.12.0",
+"react-native-safe-area-context": "4.4.1",
+"react-native-screens": "~3.18.0",
+"react-navigation": "^4.4.4",
+"@react-native-community/netinfo": "9.3.5",
+"expo-permissions": "~14.0.0",
+"expo-image-picker": "~14.0.2",
+"react-native-action-sheet": "^2.2.0",
+"expo-camera": "~13.1.0",
+"expo-location": "~15.0.1",
+"react-native-maps": "1.3.2"
+</pre>
 
 ### Installation Instructions
 
