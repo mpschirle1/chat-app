@@ -9,6 +9,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
+import MapView from "react-native-maps";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import CustomActions from "./CustomActions";
 
 const firebase = require("firebase");
 require("firebase/firestore");
@@ -26,6 +29,8 @@ export default class Chat extends React.Component {
       },
       loggedInText: "Authenticating, please wait...",
       isConnected: false,
+      image: null,
+      location: null,
     };
 
     const firebaseConfig = {
@@ -105,9 +110,11 @@ export default class Chat extends React.Component {
         createdAt: data.createdAt.toDate(),
         user: {
           _id: data.user._id,
-          avatar: data.user.avatar,
+          avatar: data.user.avatar || "",
           name: data.user.name,
         },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({ messages });
@@ -119,8 +126,10 @@ export default class Chat extends React.Component {
       uid: this.state.uid,
       _id: message._id,
       createdAt: message.createdAt,
-      text: message.text,
+      text: message.text || "",
       user: message.user,
+      image: message.image || null,
+      location: message.location || null,
     });
   };
 
@@ -131,7 +140,7 @@ export default class Chat extends React.Component {
         messages: GiftedChat.append(previousState.messages, messages),
       }),
       () => {
-        this.addMessage(messages);
+        this.addMessage();
         this.saveMessages();
       }
     );
@@ -185,30 +194,61 @@ export default class Chat extends React.Component {
     }
   }
 
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3,
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
   render() {
     let color = this.props.route.params.color;
     let name = this.props.route.params.name;
     return (
-      <View style={[styles.container, { backgroundColor: color }]}>
-        <Text style={{ textAlign: "center", color: "#fff" }}>
-          {this.state.loggedInText}
-        </Text>
-        <GiftedChat
-          renderBubble={this.renderBubble.bind(this)}
-          messages={this.state.messages}
-          renderInputToolbar={this.renderInputToolbar.bind(this)}
-          onSend={(messages) => this.onSend(messages)}
-          user={{
-            _id: this.state.uid,
-            name: name,
-            avatar: "https://picsum.photos/140",
-          }}
-        />
-        {/* Input field won’t be hidden beneath the keyboard on Android */}
-        {Platform.OS === "android" ? (
-          <KeyboardAvoidingView behavior="height" />
-        ) : null}
-      </View>
+      <ActionSheetProvider>
+        <View style={[styles.container, { backgroundColor: color }]}>
+          <Text style={{ textAlign: "center", color: "#fff" }}>
+            {this.state.loggedInText}
+          </Text>
+          <GiftedChat
+            renderBubble={this.renderBubble.bind(this)}
+            messages={this.state.messages}
+            renderInputToolbar={this.renderInputToolbar.bind(this)}
+            renderActions={this.renderCustomActions.bind(this)}
+            renderCustomView={this.renderCustomView.bind(this)}
+            onSend={(messages) => this.onSend(messages)}
+            user={{
+              _id: this.state.uid,
+              name: name,
+              avatar: "https://picsum.photos/140",
+            }}
+          />
+          {/* Input field won’t be hidden beneath the keyboard on Android */}
+          {Platform.OS === "android" ? (
+            <KeyboardAvoidingView behavior="height" />
+          ) : null}
+        </View>
+      </ActionSheetProvider>
     );
   }
 }
