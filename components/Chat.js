@@ -204,10 +204,10 @@ export default class Chat extends React.Component {
       return (
         <MapView
           style={{
-            width: 150,
-            height: 100,
-            borderRadius: 13,
-            margin: 3,
+            width: 120,
+            height: 80,
+            borderRadius: 15,
+            margin: 5,
           }}
           region={{
             latitude: currentMessage.location.latitude,
