@@ -5,7 +5,7 @@
 Chat App (as the name implies) is a simple chat app for mobile devices (iOS & Android) written with React Native, and developed using Expo. The app provides users with a chat interface and options to share images and their location. Google Firebase has been implemented for anonymous user authentication and cloud storage of messages and images. Users can also use the app offline to view previous conversations stored locally.
 
 <pre>
-<img src="assets/chat-app_screenshot1.png" width="375">  <img src="assets/chat-app_screenshot2.png" width="375">
+<img src="assets/chat-app_screenshot1.png" width="375">    <img src="assets/chat-app_screenshot2.png" width="375">
 </pre>
 
 ## Dependencies
